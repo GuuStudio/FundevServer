@@ -32,7 +32,7 @@ namespace FundevServer.Repositories
 
             if (user == null || !passwordValid)
             {
-                return string.Empty;
+                throw new Exception("Invalid email address or password");
             }
 
             var authClaims = new List<Claim>
@@ -67,7 +67,8 @@ namespace FundevServer.Repositories
             {
                 FullName = model.FirstName + model.LastName,
                 Email = model.Email,
-                UserName = model.Email
+                UserName = model.Email,
+                CreateAt = DateTime.Now,
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
