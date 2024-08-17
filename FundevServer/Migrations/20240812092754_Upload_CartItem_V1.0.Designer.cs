@@ -4,6 +4,7 @@ using FundevServer.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FundevServer.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240812092754_Upload_CartItem_V1.0")]
+    partial class Upload_CartItem_V10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,10 +112,6 @@ namespace FundevServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("DateAdded")
                         .HasColumnType("datetime2");
 
@@ -128,6 +127,10 @@ namespace FundevServer.Migrations
 
                     b.Property<double>("UnitPrice")
                         .HasColumnType("float");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -161,22 +164,15 @@ namespace FundevServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
-                    b.Property<DateTime?>("CanceledDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("CompletionDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -195,18 +191,14 @@ namespace FundevServer.Migrations
 
                     b.Property<string>("StoreId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("TotalAmount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("StoreId");
 
                     b.ToTable("Orders");
                 });
@@ -237,9 +229,6 @@ namespace FundevServer.Migrations
                         .HasColumnType("float");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Sold")
                         .HasColumnType("int");
 
                     b.Property<int>("cateId")
@@ -273,7 +262,7 @@ namespace FundevServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("StoreId")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
@@ -281,7 +270,7 @@ namespace FundevServer.Migrations
 
                     b.HasIndex("FollowerId");
 
-                    b.HasIndex("StoreId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("UserFollows");
                 });
@@ -432,29 +421,13 @@ namespace FundevServer.Migrations
 
             modelBuilder.Entity("FundevServer.Data.Order", b =>
                 {
-                    b.HasOne("FundevServer.Data.ApplicationUser", "Customer")
-                        .WithMany("Ordering")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("FundevServer.Data.Product", "Product")
                         .WithMany("Orders")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FundevServer.Data.ApplicationUser", "Store")
-                        .WithMany("Orders")
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
                     b.Navigation("Product");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("FundevServer.Data.Product", b =>
@@ -484,15 +457,15 @@ namespace FundevServer.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FundevServer.Data.ApplicationUser", "Store")
+                    b.HasOne("FundevServer.Data.ApplicationUser", "User")
                         .WithMany("Followers")
-                        .HasForeignKey("StoreId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Follower");
 
-                    b.Navigation("Store");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -551,10 +524,6 @@ namespace FundevServer.Migrations
                     b.Navigation("Followers");
 
                     b.Navigation("Following");
-
-                    b.Navigation("Ordering");
-
-                    b.Navigation("Orders");
 
                     b.Navigation("Products");
                 });

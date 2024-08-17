@@ -18,11 +18,15 @@ namespace FundevServer.Data
         public double Price { get; set; }
         [Required]
         public int Quantity { get; set; }
+        public int Sold { get; set; } = 0;
+        public string ImageUrl { get; set; } = string.Empty;
         public int cateId { get; set; }
         [ForeignKey("cateId")]
         public Category Category { get; set; } = null!;
         public string userId { get; set; } = Guid.NewGuid().ToString();
         [ForeignKey("userId")]
         public ApplicationUser User { get; set; } = null!;
+        public List<Order>? Orders { get; set; } 
+        public List<CartItem>? CartItems { get; set; } 
     }
 }

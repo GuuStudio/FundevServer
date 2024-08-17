@@ -31,14 +31,13 @@ namespace FundevServer.Controllers
         [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn(SignInModel signInModel)
         {
-            var result = await accountRepo.SignInAsync(signInModel);
-
-            if (string.IsNullOrEmpty(result))
+            try
             {
-                return Unauthorized();
+                var result = await accountRepo.SignInAsync(signInModel);
+                return Ok(result);
+            } catch (Exception ex) {
+                return Unauthorized(ex.Message);
             }
-
-            return Ok(result);
         }
     }
 }

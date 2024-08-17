@@ -55,7 +55,7 @@ namespace FundevServer.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> PutProduct(int id, ProductModel product)
+        public async Task<IActionResult> PutProduct( int id, [FromForm] AddProductModel product)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             if (id == product.Id && product.userId == userId)
@@ -77,8 +77,12 @@ namespace FundevServer.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Product>> PostProduct(ProductModel model)
+        public async Task<ActionResult<Product>> PostProduct([FromForm] AddProductModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var uid = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             if (uid == model.userId)
             {

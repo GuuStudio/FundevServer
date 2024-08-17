@@ -7,8 +7,8 @@ namespace FundevServer.Repositories
     {
         public Task<IEnumerable<ProductModel>> GetAllProductAsync();
         public Task<ProductModel> GetProductAsync(int Id);
-        public Task<Product> AddProductAsync(ProductModel model);
-        public Task UpdateProductAsync(int id, ProductModel model);
+        public Task<Product> AddProductAsync(AddProductModel model);
+        public Task UpdateProductAsync(int id, AddProductModel model);
         public Task DeleteProductAsync(int id, string userId);
     }
 }
