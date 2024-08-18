@@ -11,7 +11,7 @@ namespace FundevServer.Models
         public string? PhoneNumber { get; set; }
         public string? AddressHome { get; set; }
         public List<ProductModel>? ProductModels { get; set; }
-        public ICollection<UserFollow>? Followers { get; set; }
-        public ICollection<UserFollow>? Following { get; set; } 
+        public ICollection<FollowModel>? Followers { get; set; }
+        public ICollection<FollowModel>? Following { get; set; } 
     }
 }

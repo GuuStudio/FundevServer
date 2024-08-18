@@ -96,8 +96,16 @@ namespace FundevServer.Repositories
                     cateId = p.cateId,
                     userId = p.userId,
                 }).ToList(),
-                Followers = user.Followers,
-                Following = user.Following,
+                Followers = user.Followers?.Select(fs => new FollowModel
+                {
+                    Id = fs.Id,
+                    FollowerId = fs.FollowerId,
+                }).ToList(),
+                Following = user.Following?.Select(fs => new FollowModel
+                {
+                    Id = fs.Id,
+                    FollowerId = fs.FollowerId,
+                }).ToList(),
             };
         }
 

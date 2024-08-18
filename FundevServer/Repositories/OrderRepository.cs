@@ -126,12 +126,14 @@ namespace FundevServer.Repositories
             }
             if (order.Status == OrderStatus.Pending && userId == order.StoreId)
             {
+                order.ShippingDate = DateTime.Now;
                 order.Status = OrderStatus.Shipped;
                 _context.Orders.Update(order);
                 await _context.SaveChangesAsync();
             }
             if (order.Status == OrderStatus.Shipped && userId == order.CustomerId)
             {
+                order.CompletionDate = DateTime.Now;
                 order.Status = OrderStatus.Completed;
                 _context.Orders.Update(order);
                 await _context.SaveChangesAsync();
