@@ -19,6 +19,21 @@ namespace FundevServer.Controllers
         }
 
         [HttpGet]
+        [Authorize] 
+        public async Task<ActionResult<IEnumerable<FollowModel>>> GetFollows ()
+        {
+            string storeId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            try
+            {
+                var result = await _followRepo.GetFollowsAsync(storeId);
+                return Ok(result);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("check")]
         [Authorize]
         public async Task<ActionResult<bool>> CheckFollow([FromForm] UpdateUserFollowModel model)
         {
