@@ -77,6 +77,35 @@ namespace FundevServer.Repositories
             return products;
         }
 
+        public async Task<IEnumerable<ProductModel>> SearchProductsAsync(string name)
+        {
+            var lowercaseName = name.ToLower();
+            var products = await _context.Products
+                .Include (p => p.User)
+                .Where(p => p.Name.ToLower().Contains(lowercaseName ))
+                .Select(p => new ProductModel()
+                {
+                    Id = p.Id,
+                    ProductName = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Quantity = p.Quantity,
+                    Sold = p.Sold,
+                    ImageUrl = p.ImageUrl,
+                    cateId = p.cateId,
+                    userId = p.userId,
+                    User = new UserModel()
+                    {
+                        FullName = p.User.FullName,
+                        UserImageUrl = p.User.UserImageUrl,
+                        PhoneNumber = p.User.PhoneNumber,
+                        AddressHome = p.User.AddressHome,
+                    }
+                })
+                .ToListAsync();
+            return products;
+        }
+
         public async Task<ProductModel> GetProductAsync(int Id)
         {
             var product = await _context.Products
