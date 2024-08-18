@@ -27,7 +27,7 @@ namespace FundevServer.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductModel>>> GetProducts()
         {
             try
             {
@@ -40,7 +40,7 @@ namespace FundevServer.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductModel>> GetProduct(int id)
         {
             try
             {
@@ -50,7 +50,22 @@ namespace FundevServer.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<ProductModel>>> SearchProducts(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException("name is can not null");
+            }
+            try
+            {
+                var products = await _repo.SearchProductsAsync(name);
+                return Ok(products);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
