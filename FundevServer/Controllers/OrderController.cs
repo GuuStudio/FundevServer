@@ -1,9 +1,11 @@
-﻿using FundevServer.Data;
+﻿
+using FundevServer.Data;
+using FundevServer.Helpers;
 using FundevServer.Models;
 using FundevServer.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace FundevServer.Controllers
@@ -13,9 +15,11 @@ namespace FundevServer.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderRepository _orderRepo;
+        private readonly IHubContext<OrderHub> _hubContext;
 
-        public OrderController(IOrderRepository orderRepo) {
+        public OrderController(IOrderRepository orderRepo , IHubContext<OrderHub> hubContext) {
             _orderRepo = orderRepo;
+            _hubContext = hubContext;
         }
         // GET: OrdersController
         [HttpGet("orders")]
@@ -111,6 +115,7 @@ namespace FundevServer.Controllers
                 try
                 {
                     await _orderRepo.UploadOrderAsync(model);
+                    await _hubContext.Clients.User(model.StoreId).SendAsync("RefreshOrders");
                     return Ok("Success add order");
                 } catch (Exception ex)
                 {

@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 // Add services to the container.
-
+builder.Services.AddSignalR();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -45,13 +45,15 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
-builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<MyDbContext>().AddDefaultTokenProviders();
 builder.Services.AddDbContext<MyDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("BookStore"));
 });
+
+
 
 
 // Life cycle DI: AddSingleton(), AddTransient(), AddScoped()
@@ -116,11 +118,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseCors();
+app.UseCors(policy => policy.WithOrigins("http://localhost:3000")   
+        .AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapHub<OrderHub>("/orderHub");
 app.MapControllers();
+
 
 app.Run();
